@@ -1,8 +1,11 @@
 package com.example.mapssprint
 
+import android.content.Intent
 import android.media.MediaPlayer
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import androidx.core.app.ActivityCompat
 
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -20,6 +23,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private var mediaPlayer: MediaPlayer? = null
     companion object{
         private const val FINE_LOCATION_REQUEST_CODE = 5
+        private const val MEDIA_REQUEST_CODE = 2
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,18 +57,18 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
 
+        //Long press for Marker
         mMap.setOnMapLongClickListener { latLng ->
             mMap.addMarker(MarkerOptions().position(latLng))
             mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng))
             mediaPlayer?.start() //Start when really it should be play
         }
 
-        //Remove marker
+        //Removes marker
         mMap.setOnMarkerClickListener { marker ->
             marker.remove() //Took me ages to work out I needed to return true
             true
         }
-
 
 
         //LONDON BABY
@@ -73,5 +77,35 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         mMap.addMarker(MarkerOptions().position((london)))
         //moves camera
         mMap.moveCamera(CameraUpdateFactory.newLatLng(london))
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.toolbar_menu, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+
+        val id = item.itemId
+
+        //audio
+        if (id == R.id.menu_audio){
+            val audioIntent = Intent(Intent.ACTION_GET_CONTENT)
+           audioIntent.type = "audio/*"
+            startActivityForResult(audioIntent, MEDIA_REQUEST_CODE)
+        }
+
+        //add marker
+        if(id == R.id.marker){
+            mMap.addMarker(MarkerOptions().position(mMap.cameraPosition.target))
+            //Plays the amazing sound
+            mediaPlayer?.start()
+        }
+
+        return super.onOptionsItemSelected(item)
+
+
+
+
     }
 }

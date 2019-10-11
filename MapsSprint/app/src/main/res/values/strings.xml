@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">MapsSprint</string>
     <string name="title_activity_maps">Map</string>
+    <string name="add_the_marker">Add the marker</string>
+    <string name="add_a_marker">Add a marker</string>
+    <string name="menu_audio">Menu Audio</string>
 </resources>
