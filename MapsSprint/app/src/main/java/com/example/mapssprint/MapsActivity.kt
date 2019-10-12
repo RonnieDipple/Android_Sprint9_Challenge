@@ -1,12 +1,15 @@
 package com.example.mapssprint
 
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.media.MediaPlayer
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import com.google.android.gms.location.LocationServices
 
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -84,9 +87,32 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         return super.onCreateOptionsMenu(menu)
     }
 
+    //gets location
+    fun getLocation() {
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            val locationProviderClient = LocationServices.getFusedLocationProviderClient(this)
+
+            locationProviderClient.lastLocation.addOnSuccessListener {
+                if (it != null) {
+                    val location = LatLng(it.latitude, it.longitude)
+                    mMap.moveCamera(CameraUpdateFactory.newLatLng(location))
+                }
+            }
+        }
+    }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
 
         val id = item.itemId
+
+      /*  //User Location
+       if(id == R.id.menu_location && item.isChecked ){
+
+           getLocation()
+           item.isChecked = true
+
+
+       }*/
 
         //audio
         if (id == R.id.menu_audio){
@@ -103,9 +129,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         }
 
         return super.onOptionsItemSelected(item)
-
-
-
 
     }
 }
